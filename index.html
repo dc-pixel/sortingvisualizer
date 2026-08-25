@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Interactive sorting algorithm visualizer for Bubble, Selection, Insertion, Merge and Quick Sort.">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="color-scheme" content="dark">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
   <title>Sorting Visualizer</title>
 </head>
 <body>
@@ -77,6 +79,8 @@
       </div>
 
       <div class="visualizer-stage">
+        <div class="axis-label axis-top">100</div>
+        <div class="axis-label axis-bottom">0</div>
         <div id="array" class="array" role="img" aria-label="Array visualization"></div>
         <div id="emptyState" class="empty-state" hidden>Generate an array to begin.</div>
       </div>
@@ -84,8 +88,12 @@
 
     <section class="info-grid" aria-label="Algorithm information">
       <article class="info-card">
-        <span>Average Complexity</span>
+        <span>Average</span>
         <strong id="complexity">O(n²)</strong>
+      </article>
+      <article class="info-card">
+        <span>Best Case</span>
+        <strong id="bestCase">O(n)</strong>
       </article>
       <article class="info-card">
         <span>Stable</span>
@@ -95,7 +103,7 @@
         <span>In Place</span>
         <strong id="inPlace">Yes</strong>
       </article>
-      <article class="info-card">
+      <article class="info-card info-card-wide">
         <span>Current Algorithm</span>
         <strong id="algorithmName">Bubble Sort</strong>
       </article>
