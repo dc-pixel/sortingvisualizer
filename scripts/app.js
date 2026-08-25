@@ -20,21 +20,23 @@ const elements = {
   generate: $("#generateBtn"),
   sort: $("#sortBtn"),
   status: $("#statusText"),
+  statusMeta: $(".header-meta"),
   operationCount: $("#operationCount"),
   elapsedTime: $("#elapsedTime"),
   algorithmName: $("#algorithmName"),
   complexity: $("#complexity"),
+  bestCase: $("#bestCase"),
   stable: $("#stable"),
   inPlace: $("#inPlace"),
   emptyState: $("#emptyState"),
 };
 
 const algorithmInfo = {
-  bubble: { name: "Bubble Sort", complexity: "O(n²)", stable: "Yes", inPlace: "Yes" },
-  selection: { name: "Selection Sort", complexity: "O(n²)", stable: "No", inPlace: "Yes" },
-  insertion: { name: "Insertion Sort", complexity: "O(n²)", stable: "Yes", inPlace: "Yes" },
-  merge: { name: "Merge Sort", complexity: "O(n log n)", stable: "Yes", inPlace: "No" },
-  quick: { name: "Quick Sort", complexity: "O(n log n)", stable: "No", inPlace: "Yes" },
+  bubble: { name: "Bubble Sort", complexity: "O(n²)", bestCase: "O(n)", stable: "Yes", inPlace: "Yes" },
+  selection: { name: "Selection Sort", complexity: "O(n²)", bestCase: "O(n²)", stable: "No", inPlace: "Yes" },
+  insertion: { name: "Insertion Sort", complexity: "O(n²)", bestCase: "O(n)", stable: "Yes", inPlace: "Yes" },
+  merge: { name: "Merge Sort", complexity: "O(n log n)", bestCase: "O(n log n)", stable: "Yes", inPlace: "No" },
+  quick: { name: "Quick Sort", complexity: "O(n log n)", bestCase: "O(n log n)", stable: "No", inPlace: "Yes" },
 };
 
 function randomArray(size) {
@@ -60,13 +62,14 @@ function render(values = state.values) {
 
 function setStatus(text, active = false) {
   elements.status.textContent = text;
-  elements.status.parentElement.classList.toggle("is-active", active);
+  elements.statusMeta.classList.toggle("is-active", active);
 }
 
 function updateAlgorithmInfo() {
   const info = algorithmInfo[elements.algorithm.value];
   elements.algorithmName.textContent = info.name;
   elements.complexity.textContent = info.complexity;
+  elements.bestCase.textContent = info.bestCase;
   elements.stable.textContent = info.stable;
   elements.inPlace.textContent = info.inPlace;
 }
@@ -102,6 +105,7 @@ function generateArray() {
   state.values = randomArray(Number(elements.arraySize.value));
   state.operations = 0;
   state.startedAt = 0;
+  elements.sizeValue.textContent = elements.arraySize.value;
   updateStats();
   render();
   setStatus("Ready");
@@ -129,7 +133,7 @@ async function startSorting() {
     await sorter.finish();
     setStatus("Sorted");
   } catch (error) {
-    console.error(error);
+    console.error("Sorting failed:", error);
     setStatus("Something went wrong");
   } finally {
     state.sorting = false;
@@ -148,9 +152,21 @@ elements.speed.addEventListener("input", () => {
   elements.speedValue.textContent = `${Number(elements.speed.value).toFixed(2).replace(/0$/, "")}×`;
 });
 
-elements.algorithm.addEventListener("change", updateAlgorithmInfo);
+elements.algorithm.addEventListener("change", () => {
+  updateAlgorithmInfo();
+  setStatus("Ready");
+});
 elements.generate.addEventListener("click", generateArray);
 elements.sort.addEventListener("click", startSorting);
+
+document.addEventListener("keydown", (event) => {
+  if (event.target.matches("input, select, button")) return;
+  if (event.code === "Space") {
+    event.preventDefault();
+    startSorting();
+  }
+  if (event.key.toLowerCase() === "r") generateArray();
+});
 
 updateAlgorithmInfo();
 generateArray();
