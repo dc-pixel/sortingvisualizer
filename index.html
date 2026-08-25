@@ -1,84 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet" />
-
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-  <link rel="stylesheet" href="./css/style.css" />
-  <title>Sorting visualizer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive sorting algorithm visualizer for Bubble, Selection, Insertion, Merge and Quick Sort.">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Sorting Visualizer</title>
 </head>
-
 <body>
-  <div class="nav-container">
-    <h2 class="title" onclick="window.location.reload()">
-      Sorting visualizer
-    </h2>
-    <div class="navbar" id="navbar">
-      <a id="random" onclick="RenderScreen()">Generate array</a>
-      <span class="options">
-        <select name="select sort algorithm" id="menu" class="algo-menu">
-          <option value="0">Choose algorithm</option>
-          <option value="1">Bubble Sort</option>
-          <option value="2">Selection Sort</option>
-          <option value="3">Insertion Sort</option>
-          <option value="4">Merge Sort</option>
-          <option value="5">Quick Sort</option>
-        </select>
-      </span>
-      <span class="options">
-        <select name="select array size" id="menu" class="size-menu">
-          <option value="0">Array size</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-          <option value="40">40</option>
-          <option value="50">50</option>
-          <option value="60">60</option>
-          <option value="70">70</option>
-          <option value="80">80</option>
-          <option value="90">90</option>
-          <option value="100">100</option>
-        </select>
-      </span>
-      <span class="options">
-        <select name="speed of visualization" id="menu" class="speed-menu">
-          <option value="0">Speed</option>
-          <option value="0.5">0.50x</option>
-          <option value="0.75">0.75x</option>
-          <option value="1">1.00x</option>
-          <option value="2">2.00x</option>
-          <option value="4">4.00x</option>
-        </select>
-      </span>
-      <a class="start">Sort</a>
-      <a class="icon"><i class="fa fa-bars"></i></a>
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">SV</div>
+      <div>
+        <h1>Sorting Visualizer</h1>
+        <p>See algorithms come to life.</p>
+      </div>
     </div>
-  </div>
-  <div class="center">
-    <div class="array"></div>
-  </div>
-  <footer class="footer">
-    <p>Created with <i class="fa fa-heart"></i> by Dev Pratap Singh</p>
-    <p>
-      <a href="https://www.linkedin.com/in/dev-pratap-singh-44ba38270/" target="_blank" class="link">
-        <i class="fa fa-linkedin-square" aria-hidden="true"></i>
-      </a>
-      <a href="https://github.com/devpratapsingh11" target="_blank" class="link">
-        <i class="fa fa-github" aria-hidden="true"></i>
-      </a>
-    </p>
+    <div class="header-meta">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span id="statusText">Ready</span>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="control-panel" aria-label="Sorting controls">
+      <div class="controls-grid">
+        <div class="control-group">
+          <label for="algorithm">Algorithm</label>
+          <select id="algorithm" class="control-input">
+            <option value="bubble">Bubble Sort</option>
+            <option value="selection">Selection Sort</option>
+            <option value="insertion">Insertion Sort</option>
+            <option value="merge">Merge Sort</option>
+            <option value="quick">Quick Sort</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="arraySize">Array Size <span id="sizeValue">40</span></label>
+          <input id="arraySize" class="range-input" type="range" min="5" max="100" value="40" step="1">
+        </div>
+
+        <div class="control-group">
+          <label for="speed">Speed <span id="speedValue">1.0×</span></label>
+          <input id="speed" class="range-input" type="range" min="0.25" max="4" value="1" step="0.25">
+        </div>
+
+        <div class="control-actions">
+          <button id="generateBtn" class="btn btn-secondary" type="button">New Array</button>
+          <button id="sortBtn" class="btn btn-primary" type="button">Start Sorting</button>
+        </div>
+      </div>
+
+      <div class="legend" aria-label="Visualization legend">
+        <span><i class="legend-swatch default"></i>Unsorted</span>
+        <span><i class="legend-swatch current"></i>Comparing</span>
+        <span><i class="legend-swatch min"></i>Pivot / Minimum</span>
+        <span><i class="legend-swatch done"></i>Sorted</span>
+      </div>
+    </section>
+
+    <section class="visualizer-card" aria-labelledby="visualizerTitle">
+      <div class="visualizer-heading">
+        <div>
+          <p class="eyebrow">LIVE VISUALIZATION</p>
+          <h2 id="visualizerTitle">Sorting in real time</h2>
+        </div>
+        <div class="stats" aria-live="polite">
+          <span id="operationCount">0 operations</span>
+          <span id="elapsedTime">0.0s</span>
+        </div>
+      </div>
+
+      <div class="visualizer-stage">
+        <div id="array" class="array" role="img" aria-label="Array visualization"></div>
+        <div id="emptyState" class="empty-state" hidden>Generate an array to begin.</div>
+      </div>
+    </section>
+
+    <section class="info-grid" aria-label="Algorithm information">
+      <article class="info-card">
+        <span>Average Complexity</span>
+        <strong id="complexity">O(n²)</strong>
+      </article>
+      <article class="info-card">
+        <span>Stable</span>
+        <strong id="stable">Yes</strong>
+      </article>
+      <article class="info-card">
+        <span>In Place</span>
+        <strong id="inPlace">Yes</strong>
+      </article>
+      <article class="info-card">
+        <span>Current Algorithm</span>
+        <strong id="algorithmName">Bubble Sort</strong>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Built by Dev Pratap Singh</span>
+    <span class="footer-links">
+      <a href="https://github.com/devpratapsingh11" target="_blank" rel="noreferrer">GitHub</a>
+      <a href="https://www.linkedin.com/in/dev-pratap-singh-44ba38270/" target="_blank" rel="noreferrer">LinkedIn</a>
+    </span>
   </footer>
-  <script src="./scripts/app.js"></script>
+
   <script src="./scripts/helper.js"></script>
   <script src="./scripts/sort-algorithms.js"></script>
+  <script src="./scripts/app.js"></script>
 </body>
-
 </html>
