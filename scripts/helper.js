@@ -1,47 +1,58 @@
 "use strict";
+
 class Helper {
-    constructor(time, list = []) {
-        this.time = parseInt(400/time);
-        this.list = list;
-    }
+  constructor(speed = 1, list = [], onOperation = () => {}) {
+    this.speed = Number(speed) || 1;
+    this.list = list;
+    this.onOperation = onOperation;
+  }
 
-    mark = async (index) => {
-        this.list[index].setAttribute("class", "cell current");
-    }
+  delay = async (base = 110) => {
+    const milliseconds = Math.max(10, base / this.speed);
+    await new Promise((resolve) => setTimeout(resolve, milliseconds));
+  };
 
-    markSpl = async (index) => {
-        this.list[index].setAttribute("class", "cell min");
-    }
+  pause = async () => this.delay();
 
-    unmark = async (index) => {
-        this.list[index].setAttribute("class", "cell");
-    }
-    
-    pause = async() => {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve();
-            }, this.time);
-        });
-    }
+  getValue = (index) => Number(this.list[index]?.getAttribute("value"));
 
-    compare = async (index1, index2) => {
-        await this.pause();
-        let value1 = Number(this.list[index1].getAttribute("value"));
-        let value2 = Number(this.list[index2].getAttribute("value"));
-        if(value1 > value2) {
-            return true;
-        }
-        return false;
-    }
+  mark = async (index) => {
+    if (!this.list[index]) return;
+    this.list[index].classList.add("current");
+  };
 
-    swap = async (index1, index2) => {
-        await this.pause();
-        let value1 = this.list[index1].getAttribute("value");
-        let value2 = this.list[index2].getAttribute("value");
-        this.list[index1].setAttribute("value", value2);
-        this.list[index1].style.height = `${3.8*value2}px`;
-        this.list[index2].setAttribute("value", value1);
-        this.list[index2].style.height = `${3.8*value1}px`;
-    }
-};
+  markSpl = async (index) => {
+    if (!this.list[index]) return;
+    this.list[index].classList.add("min");
+  };
+
+  unmark = async (index) => {
+    if (!this.list[index]) return;
+    this.list[index].classList.remove("current", "min");
+  };
+
+  compare = async (index1, index2) => {
+    await this.delay();
+    this.onOperation();
+    return this.getValue(index1) > this.getValue(index2);
+  };
+
+  swap = async (index1, index2) => {
+    if (index1 === index2 || !this.list[index1] || !this.list[index2]) return;
+    await this.delay();
+    this.onOperation();
+
+    const value1 = this.getValue(index1);
+    const value2 = this.getValue(index2);
+    this.setValue(index1, value2);
+    this.setValue(index2, value1);
+  };
+
+  setValue = (index, value) => {
+    const node = this.list[index];
+    if (!node) return;
+    node.setAttribute("value", String(value));
+    node.style.height = `${Math.max(4, Number(value) * 0.92)}%`;
+    node.setAttribute("aria-label", `Value ${value}`);
+  };
+}
